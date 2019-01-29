@@ -5,15 +5,16 @@ import (
 	"sync"
 	"time"
 
-	lib "../lib"
+	lib "github.com/geen02/swsd/tree/master/pkg/lib"
 )
 
 var timeOut = time.Duration(10)
 var requestWG = sync.WaitGroup{}
 var fileName = "./Minute_1.log"
 
+// CreateNewSendAgent : return agent struct
 func CreateNewSendAgent() {
-	lib. createConfig("./config.yaml")
+	lib.NewCreateConfig("./config.yaml")
 	cString := make(chan string)
 
 	go ReadSensorDataByLineFromFile(fileName, &cString)
