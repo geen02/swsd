@@ -1,4 +1,4 @@
-package swsdLib
+package swsdlib
 
 import (
 	"log"

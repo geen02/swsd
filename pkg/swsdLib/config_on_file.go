@@ -1,4 +1,4 @@
-package swsdLib
+package swsdlib
 
 import (
 	"fmt"
@@ -28,8 +28,15 @@ func NewCreateConfig(configFile string) (sc *SWSDConfig) {
 		panic(fmt.Errorf("Fatal error config file: %s", err))
 	}
 
-	sc.DataFile = viper.Get("datafile_path").(string)
-	sc.StoreServer = viper.Get("store_server_url").(string)
+	sc = &SWSDConfig{}
+
+	if viper.InConfig("datafile_path") {
+		sc.DataFile = viper.Get("datafile_path").(string)
+	}
+
+	if viper.InConfig("store_server_url") {
+		sc.StoreServer = viper.Get("store_server_url").(string)
+	}
 
 	return
 }

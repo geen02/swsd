@@ -5,36 +5,33 @@ import (
 	"sync"
 	"time"
 
-	"github.com/geen02/swsd/pkg/swsdLib"
+	"github.com/geen02/swsd/pkg/swsdlib"
 )
 
 var timeOut = time.Duration(10)
 var requestWG = sync.WaitGroup{}
 
-// RUN : start agent service
-func RUN() {
-	cfg := swsdLib.NewCreateConfig("./config.yaml")
+// Run : start agent service
+func Run() {
+	cfg := swsdlib.NewCreateConfig("./config.yaml")
 
 	cString := make(chan string)
 
-	go swsdLib.ReadSensorDataByLineFromFile(cfg.DataFile, &cString)
+	go swsdlib.ReadSensorDataByLineFromFile(cfg.DataFile, &cString)
 
-	go func() {
-		for rawData := range cString {
+	for rawData := range cString {
+		go func(rawData string) {
 			requestWG.Add(1)
 			defer requestWG.Done()
 
-			structedData, _ := swsdLib.ParseDataByLine(rawData)
-			jsonData, _ := swsdLib.GetJsonFromWeatherSensorData(structedData)
+			structedData, _ := swsdlib.ParseDataByLine(rawData)
+			jsonData, _ := swsdlib.GetJsonFromWeatherSensorData(structedData)
 			fmt.Printf("jsonData: %v\n", string(jsonData))
 			// statusCode, returnData, _ := SendWeatherSensorData("POST", cfg.StoreServer, jsonData)
 			// fmt.Printf("Return: %v - %v\n", statusCode, returnData)
-		}
-	}()
+		}(rawData)
+	}
 
 	fmt.Println("readFileWG.Wait()")
 	requestWG.Wait()
-
-	<-time.After(timeOut * time.Second)
-	fmt.Printf("Timeout to run test %v", timeOut)
 }
