@@ -6,9 +6,11 @@ import (
 	"github.com/hpcloud/tail"
 )
 
-// Read data from file line by line and return as []string
+// ReadSensorDataByLineFromFile read data from file line by line and return as []string
 func ReadSensorDataByLineFromFile(filename string, cString *chan string) {
-	t, err := tail.TailFile(filename, tail.Config{Follow: true})
+	t, err := tail.TailFile(filename, tail.Config{
+		Follow: true,
+		ReOpen: true})
 	if err != nil {
 		log.Fatalf("Could not open file %s :%v", filename, err)
 	}
