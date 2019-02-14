@@ -44,6 +44,15 @@ GO_LDFLAGS_STATIC=-ldflags "-w $(CTIMEVAR) -extldflags -static"
 
 
 all: test build
+build-win:
+	mkdir -p $(BUILDDIR)
+	GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=$(CGO_ENABLED) $(GOBUILD) \
+		 -o $(BUILDDIR)/$(NAME)-$(GOOS)-$(GOARCH).exe \
+		 -a -tags "$(BUILDTAGS) static_build netgo" \
+		 -installsuffix netgo ${GO_LDFLAGS_STATIC} $(GO_SOURCE)
+	md5 $(BUILDDIR)/$(NAME)-$(GOOS)-$(GOARCH).exe > $(BUILDDIR)/$(NAME)-$(GOOS)-$(GOARCH).md5
+	shasum $(BUILDDIR)/$(NAME)-$(GOOS)-$(GOARCH).exe > $(BUILDDIR)/$(NAME)-$(GOOS)-$(GOARCH).sha256
+
 build:
 	mkdir -p $(BUILDDIR)
 	GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=$(CGO_ENABLED) $(GOBUILD) \
